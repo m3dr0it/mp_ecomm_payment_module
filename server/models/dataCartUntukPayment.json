@@ -1,0 +1,14 @@
+{
+    "order_acco_id":1001,
+    "total_due":"1000000",
+    "product":[
+        {
+            "prod_price":500000,
+            "prod_acco_id":"1002"
+        },
+        {
+            "prod_price":1000000,
+            "prod_acco_id":"1003"
+        }
+    ]
+}
