@@ -65,13 +65,13 @@ const deleteWallet = (req,res,next) => {
   });
 }
 
-
-
 //coba coba
 const getCart = (req,res,next) => {
+  const {cart_id} = req.params
+  console.log(cart_id)
   const {cart,cartLineItems} = req.context.models
-  cart.findAll({
-    include:{model:cartLineItems},raw:true
+  cart.findOne({
+    include:{model:cartLineItems},where:{cart_id:cart_id}
   }).then((result) => {
     console.log(result)
     return res.send(result)
@@ -101,6 +101,7 @@ const getProdIdAndAccount = async (req,res,) => {
 const defineOrder = (req,res,next) => {
   const cart = req.body
   const {order} = req.context.models
+  
 }
 
 export {getProdIdAndAccount,getCart,getWalletByAccount,insertWallet,updateWallet,deleteWallet,getSaldoAccount,getWalletPaymentType}

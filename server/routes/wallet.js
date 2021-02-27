@@ -8,7 +8,7 @@ const router = Router()
 
 router.get('/productId',getProdIdAndAccount)
 router.get('/paymentType',getWalletPaymentType)
-router.get('/cart',getCart)
+router.get('/cart/:cart_id',getCart)
 
 // router.get('/:acco_id',getWalletByAccount)
 router.post('/',insertWallet)
