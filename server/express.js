@@ -54,13 +54,15 @@ app.use((req,res) => {
 })
 
 const dropDatabaseSync = false;
-sequelize.sync({ force: dropDatabaseSync }).then(async () => {
+sequelize.sync({ force: dropDatabaseSync }).then((result) => {
   if (dropDatabaseSync) {
     console.log("Connection established, but do nothing")
   }
+}).catch((err) => {
+  console.log(err)
+});
 
 app.listen(config.port, () =>
   console.info('Server started on port %s.', config.port),
-  );
-});
+);
 export default app

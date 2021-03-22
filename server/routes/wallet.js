@@ -6,15 +6,15 @@ const {addSaldo} = require('../controllers/walletTransactionController')
 const Router = require('express').Router
 const router = Router()
 
-router.get('/productId',getProdIdAndAccount)
-router.get('/paymentType',getWalletPaymentType)
-router.get('/cart/:cart_id',getCart)
+// router.get('/productId',getProdIdAndAccount)
+// router.get('/paymentType',getWalletPaymentType)
+// router.get('/cart/:cart_id',getCart)
 
-// router.get('/:acco_id',getWalletByAccount)
+router.get('/:acco_id',getWalletByAccount)
 router.post('/',insertWallet)
 router.put('/:wale_id',updateWallet)
 router.delete('/:wale_id',deleteWallet)
-router.get('/saldo/addSaldo/:acco_id/:amount',addSaldo)
+router.post('/saldo/add',addSaldo)
 router.get('/saldo/:acco_id',getSaldoAccount)
 // router.get('/wallet/paymentType',getWalletPaymentType)
 export default router

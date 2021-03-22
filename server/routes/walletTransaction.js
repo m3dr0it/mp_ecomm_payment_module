@@ -5,11 +5,16 @@ import {
     insertWalletTransaction,
     updateWalletTransaction,
     deleteWalletTransaction,
-    newTransaction
+    newTransaction,
+    verifyTrans,
+    transactionBankTransfer,
+    getBillingToken,
 } from '../controllers/walletTransactionController'
 
+router.post('/generate-token',getBillingToken)
+router.get('/transfer-bank/:token',transactionBankTransfer,newTransaction)
 router.get('/:acco_id',getWalletTransactionByAccount)
-router.post('/',newTransaction)
+router.post('/',verifyTrans,newTransaction)
 router.put('/',updateWalletTransaction)
 router.delete('/',deleteWalletTransaction)
 

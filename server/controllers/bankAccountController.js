@@ -1,15 +1,24 @@
 const getBankAccountByAccount = (req,res,next) => {
     const {acco_id} = req.params
-  req.context.models.bankAccount.findAll({where:{bacc_acco_id:acco_id}}).then((bankAccount) => {
-      return res.send(bankAccount)
+    const {bankAccount,bank} = req.context.models
+    bankAccount.findAll({
+        where:{bacc_acco_id:acco_id},
+        include:{model:bank}
+    })
+    .then((bankAccounts) => {
+      return res.send(bankAccounts)
   }).catch((err) => {
-      return res.send(err.message)
+      console.log(err)
+      return res.send(err)
   });
 }
 
 const insertBankAccount = (req,res,next) => {
     const {bacc_owner,bacc_acc_number,bacc_saldo,bacc_acco_id,bacc_bank_id} = req.body
-    req.context.models.bankAccount.create({bacc_owner,bacc_acc_number,bacc_saldo,bacc_acco_id,bacc_bank_id})
+    const {bankAccount} = req.context.models
+    bankAccount.create({
+        bacc_owner,bacc_acc_number,bacc_saldo,bacc_acco_id,bacc_bank_id
+    })
     .then((result) => {
         return res.send(result)
     }).catch((err) => {
@@ -41,12 +50,9 @@ const deleteBankAccount = (req,res,next) => {
 
 const getBankAccountAndBank = (req,res,next) => {
     console.log("in controller")
-    const bank = req.context.models.bank
-    const account = req.context.models.account
-    console.log(account)
-    const bankAccount = req.context.models.bankAccount
+    const {bank,account,bankAccount} = req.context.models
     const bacc_id = req.params.bacc_id
-    req.context.models.bankAccount.findAll({
+    bankAccount.findAll({
         include:[
             {model:account},
             {model:bank}

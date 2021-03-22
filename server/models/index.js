@@ -10,16 +10,16 @@ import config from '../../config/config'
 //         dialect: 'postgres',
 //     },
 //   );
-
-export const sequelize = new Sequelize(
+const sequelize = new Sequelize(
     config.db_name,
     config.db_username,
     config.db_password,
     {
       dialect: 'postgres',
-      host: '192.168.100.254'
-    },
+      host: '104.198.212.208'
+    }
   );
+
 const Op = Sequelize.Op;    
 
 const models = {
@@ -41,8 +41,6 @@ Object.keys(models).forEach(key => {
     }
   });
 
-
-export {Op };
+export {Op};
+export {sequelize}
 export default models;
-// // export { sequelize };
-// export default models;

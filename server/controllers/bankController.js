@@ -7,7 +7,6 @@ const getBank = (req,res,next) => {
 }
 
 const insertBank = (req,res,next) => {
-    console.log(req.body)
   const {bank_id,bank_name} = req.body
     req.context.models.bank.create({
         bank_id,bank_name

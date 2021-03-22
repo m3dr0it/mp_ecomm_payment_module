@@ -4,12 +4,19 @@ import app from './express'
 
 // Connection URL
 const dropDatabaseSync = false;
-sequelize.sync({ force: dropDatabaseSync }).then(async () => {
-  if (dropDatabaseSync) {
-    console.log("Connection established, but do nothing")
-  }
 
-  app.listen(config.port, () =>
-  console.info('Server started on port %s.', config.port),
-  );
-});
+try {
+  sequelize.sync({ force: dropDatabaseSync }).then((result) => {
+    if (dropDatabaseSync) {
+      console.log("Connection established, but do nothing")
+    }  
+  }).catch((err) => {
+    console.log(err)
+  });
+} catch (error) {
+  console.log(error)
+}
+
+app.listen(config.port, () =>
+  console.info('Server started on port %s.', config.port)
+)
