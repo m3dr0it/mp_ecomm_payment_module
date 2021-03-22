@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ./server/express.js",
+    "start": "node --exec babel-node ./server/express.js",
     "reverse:db": "sequelize-auto -o ./modelquiz -d quiz -h localhost -u postgres -p 5432 -x agas -e postgres",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,7 +23,8 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-hot-loader": "^4.13.0",
-    "sequelize": "^5.21.7"
+    "sequelize": "^5.21.7",
+    "@babel/node": "^7.12.17"
   },
   "devDependencies": {
     "@babel/core": "^7.12.13",
