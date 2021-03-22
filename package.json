@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node --exec babel-node ./server/express.js",
+    "start": "nodemon --exec babel-node ./server/express.js",
     "reverse:db": "sequelize-auto -o ./modelquiz -d quiz -h localhost -u postgres -p 5432 -x agas -e postgres",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -29,7 +29,8 @@
     "@babel/preset-env": "^7.13.0",
     "@babel/preset-react": "^7.12.13",
     "babel-loader": "^8.2.2",
-    "babel-node": "^0.0.1-security"
+    "babel-node": "^0.0.1-security",
+    "nodemon": "^2.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.12.13",
