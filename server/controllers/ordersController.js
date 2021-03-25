@@ -3,7 +3,7 @@ const getOrders = async (req, res, next) => {
     try {
         const { order_acco_id } = req.params
         const { orders } = req.context.models
-        const gotOrders = await orders.findAll({ where: [{ order_acco_id },{order_stat_name:'CHECKOUT'}]})
+        const gotOrders = await orders.findAll({ where: { order_acco_id }})
         res.json(gotOrders)
     } catch (error) {
         res.json(error)
