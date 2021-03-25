@@ -50,7 +50,7 @@ const deleteWalletTransaction = (req, res, next) => {
 const newTransaction = async (req, res, next) => {
     console.log("test")
     const wale_id_mpcomm = 9999;
-    const { acco_id, total_amount, order_name, transaction_type, payment_by, vendor, bacc_id } = req.locals||req.body
+    const { acco_id, total_amount, order_name, transaction_type, payment_by, vendor, bacc_id } = req.body ||null
     console.log(payment_by)
     const { wallet, walletTransaction, bankAccount, orders } = req.context.models
     console.log(req.body)
