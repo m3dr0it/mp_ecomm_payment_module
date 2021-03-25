@@ -21,7 +21,6 @@ const createOrder = async (req, res, next) => {
         order_total_qty,
         order_watr_numbers,
         order_is_receive,
-        order_acco_id,
         order_stat_name,
         order_weight
     } = req.body
@@ -50,7 +49,6 @@ const createOrder = async (req, res, next) => {
             order_weight
         }
         let createOrder = await orders.create(data)
-        console.log(createOrder)
         res.json(createOrder)  
     } catch (error) {
         console.log(error)
@@ -66,4 +64,42 @@ const updateOrder = (req,res,next) => {
   }
 }
 
-export { getOrders, createOrder }
+const cancelOrder = async (req,res,next) => {
+    let wale_id_mpcomm = 9999;
+    const {order_name} = req.body
+    const {orders,walletTransaction} = req.context.models
+    let getOrder = await orders.findOne({where:{order_name}})
+
+    if(getOrder.order_stat_name === "SHIPPING"){
+        res.send({
+            error:true,
+            message:"Order sudah dalam status Shipping"
+        })
+
+    }else{
+        let watr_numbers = getOrder.order_watr_numbers
+        let getWatr = await walletTransaction.findOne({where:{watr_numbers}})
+        let wale_id = getWatr.watr_numbers.split("-")[0]
+        let total_amount = getWatr.watr_debet
+
+        let datransCreditToUser = {
+            watr_numbers:  9999 + "-"+wale_id+"-"+ lastTransNo,
+            watr_debet: 0,
+            watr_date: new Date(),
+            watr_credit: total_amount,
+            watr_acc_target: wale_id,
+            watr_wale_id: 9999,
+            watr_paty_name: "TFC",
+            order_name
+        }
+
+        await wallet.increment('wale_saldo', { by: total_amount, where: { wale_id } })
+        let result = await createTransaction(walletTransaction, dataTransaction)
+        await wallet.decrement('wale_saldo', { by: total_amount, where: { wale_id : wale_id_mpcomm }})
+        await walletTransaction.create(datransCreditToUser)
+        console.log(getWatr)
+        res.sendStatus(200)
+    }
+}
+
+export { getOrders, createOrder, cancelOrder }

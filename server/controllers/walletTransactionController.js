@@ -50,7 +50,7 @@ const deleteWalletTransaction = (req, res, next) => {
 const newTransaction = async (req, res, next) => {
     console.log("test")
     const wale_id_mpcomm = 9999;
-    const { acco_id, total_amount, order_name, transaction_type, payment_by, vendor, bacc_id } = req.body
+    const { acco_id, total_amount, order_name, transaction_type, payment_by, vendor, bacc_id } = req.locals||req.body
     console.log(payment_by)
     const { wallet, walletTransaction, bankAccount, orders } = req.context.models
     console.log(req.body)
@@ -139,18 +139,9 @@ const newTransaction = async (req, res, next) => {
             })
         } else if (payment_by == "wallet") {
             console.log(result.watr_id)
-            res.json({ 
-                payment_by:"wallet",
-                wale_id:dataTransaction.watr_wale_id,
-                message:"Pembayaran Berhasil",
-                watr_id:dataTransaction.watr_id,
-                watr_numbers: dataTransaction.watr_numbers 
-            })
+            res.send(dataTransaction.watr_numbers)
         }else{
-            res.json({ 
-                watr_id:dataTransaction.watr_id,
-                watr_numbers: dataTransaction.watr_numbers
-            })
+            res.send(dataTransaction.watr_numbers)
         }
     } catch (error) {
         console.log(error)
