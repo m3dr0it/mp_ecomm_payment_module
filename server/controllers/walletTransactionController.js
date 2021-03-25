@@ -126,7 +126,7 @@ const newTransaction = async (req, res, next) => {
         await createTransaction(walletTransaction, dataTransactionCredit)
 
         await orders.update({
-            order_status:"ON_PROCESS",
+            order_stat_name:"PAID",
             order_watr_numbers:dataTransaction.watr_numbers
         },{where:{order_name}})
 
@@ -141,7 +141,7 @@ const newTransaction = async (req, res, next) => {
             console.log(result.watr_id)
             res.json({ 
                 payment_by:"wallet",
-                wale_id:wale_id,
+                wale_id:dataTransaction.watr_wale_id,
                 message:"Pembayaran Berhasil",
                 watr_id:dataTransaction.watr_id,
                 watr_numbers: dataTransaction.watr_numbers 
