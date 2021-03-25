@@ -139,9 +139,9 @@ const newTransaction = async (req, res, next) => {
             })
         } else if (payment_by == "wallet") {
             console.log(result.watr_id)
-            res.send(dataTransaction.watr_numbers)
+            res.send({watr_numbers:dataTransaction.watr_numbers})
         }else{
-            res.send(dataTransaction.watr_numbers)
+            res.send({watr_numbers:dataTransaction.watr_numbers})
         }
     } catch (error) {
         console.log(error)
