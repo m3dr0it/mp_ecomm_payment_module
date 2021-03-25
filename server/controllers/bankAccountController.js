@@ -13,6 +13,8 @@ const getBankAccountByAccount = (req,res,next) => {
   });
 }
 
+
+
 const insertBankAccount = (req,res,next) => {
     const {bacc_owner,bacc_acc_number,bacc_saldo,bacc_acco_id,bacc_bank_id} = req.body
     const {bankAccount} = req.context.models

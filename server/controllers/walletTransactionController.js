@@ -1,4 +1,6 @@
 import jsonwebtoken, { JsonWebTokenError } from 'jsonwebtoken'
+import easyinvoice from "easyinvoice";
+import { response } from 'express';
 
 const getWalletTransactionByAccount = (req, res, next) => {
     const { acco_id } = req.params
@@ -50,7 +52,7 @@ const newTransaction = async (req, res, next) => {
     const wale_id_mpcomm = 9999;
     const { acco_id, total_amount, order_name, transaction_type, payment_by, vendor, bacc_id } = req.body
     console.log(payment_by)
-    const { wallet, walletTransaction, bankAccount } = req.context.models
+    const { wallet, walletTransaction, bankAccount, orders } = req.context.models
     console.log(req.body)
     console.log(bacc_id)
 
@@ -112,6 +114,10 @@ const newTransaction = async (req, res, next) => {
 
         }
 
+        const createInvoice = (req,res,next) => {
+          res.send("creating invoice")
+        }
+
         console.log(dataTransaction)
 
         await wallet.decrement('wale_saldo', { by: total_amount, where: { wale_acco_id: acco_id } })
@@ -119,11 +125,24 @@ const newTransaction = async (req, res, next) => {
         await wallet.increment('wale_saldo', { by: total_amount, where: { wale_acco_id: wale_id_mpcomm } })
         await createTransaction(walletTransaction, dataTransactionCredit)
 
+        await orders.update({
+            order_status:"ON_PROCESS",
+            order_watr_numbers:dataTransaction.watr_numbers
+        },{where:{order_name}})
+
+
         if (payment_by == "transfer_bank") {
-            res.send("Pembayaran Berhasil")
+            res.send({
+                payment_by:"transfer_bank",
+                bacc_id:bacc_id,
+                message:"Pembayaran Berhasil"
+            })
         } else if (payment_by == "wallet") {
             console.log(result.watr_id)
             res.json({ 
+                payment_by:"wallet",
+                wale_id:wale_id,
+                message:"Pembayaran Berhasil",
                 watr_id:dataTransaction.watr_id,
                 watr_numbers: dataTransaction.watr_numbers 
             })

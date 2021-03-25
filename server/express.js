@@ -8,6 +8,7 @@ import cors from 'cors'
 // #1. add this script to import model dan routes
 import models from './models/index';
 import routes from './routes/index';
+
 import { sequelize } from './models/index'
 const app = express()
 import devBundle from './devBundle'
@@ -32,6 +33,8 @@ app.use(async (req, res, next) => {
 });
 // app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
 // #2 add this script when you add other route
+app.use('/api/orders',routes.orders);
+
 app.use('/api/wallet',routes.wallet)
 app.use('/api/bank',routes.bank)
 app.use('/api/walletTransaction',routes.walletTransaction)
@@ -63,6 +66,7 @@ sequelize.sync({ force: dropDatabaseSync }).then((result) => {
 });
 
 app.listen(config.port, () =>
-  console.info('Server started on port %s.', config.port),
-);
+  console.info('Server started on port %s.', config.port)
+)
+
 export default app
