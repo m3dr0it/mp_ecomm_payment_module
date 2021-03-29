@@ -63,7 +63,14 @@ const createOrder = async (req, res, next) => {
 }
 
 const finishOrder = async (req,res,next) => {
-  
+    const {order_name} = req.body
+    const queryGetOrderDetail = "select orders.order_total_due,wallet.wale_id from orders join orders_line_items on order_name = orit_order_name"+
+    " join product on orit_prod_id=prod_id join wallet on wale_acco_id = prod_acco_id where order_name='"+order_name+"'";
+
+    let [orderDetail,meta] = sequelize.query(queryGetOrderDetail)
+    console.log(orderDetail)
+
+    res.send(orderDetail)
 }
 
 const getOrderedProduct = async (req,res,next) => {
@@ -144,4 +151,4 @@ const cancelOrder = async (req, res, next) => {
     }
 }
 
-export { getOrders, createOrder, cancelOrder , getOrderedProduct,updateOrder}
+export { getOrders, createOrder, cancelOrder , getOrderedProduct,updateOrder, finishOrder}
