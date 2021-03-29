@@ -97,6 +97,7 @@ const updateOrder = async (req, res, next) => {
 
 const cancelOrder = async (req, res, next) => {
     let MPCOMM = 9999;
+    console.log(req.body)
     const { order_name } = req.body
     const { orders, walletTransaction, wallet } = req.context.models
     
