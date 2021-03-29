@@ -18,8 +18,6 @@ const CURRENT_WORKING_DIR = process.cwd()
 //comment script dibawah before building for production
 //devBundle.compile(app)
 
-res.header("Access-Control-Allow-Origin", "localhost"); // update to match the domain you will make the request from
-res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
 // parse body params and attache them to req.body
 app.use(express.json())
@@ -47,6 +45,9 @@ app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
 
 // Catch unauthorised errors
 app.use((err, req, res, next) => {
+  
+res.header("Access-Control-Allow-Origin", "localhost"); // update to match the domain you will make the request from
+res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   if (err.name === 'UnauthorizedError') {
     res.status(401).json({"error" : err.name + ": " + err.message})
   }else if (err) {
