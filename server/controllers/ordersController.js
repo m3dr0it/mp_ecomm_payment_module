@@ -141,6 +141,7 @@ const cancelOrder = async (req, res, next) => {
 
             case "CHECKOUT":
                 await orders.update({order_stat_name:"CANCELLED"},{where:{order_name}})
+                res.sendStatus(200)
                 break;
 
             default:
