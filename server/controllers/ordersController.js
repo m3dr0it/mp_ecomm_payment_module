@@ -1,9 +1,13 @@
 import { sequelize } from '../models/index'
+import {getLastTransWallet} from './services/getLastTransWallet'
+import {createTransaction} from './services/createNewTransaction'
+import {prepareCancelTransaction} from './services/prepareTransaction'
+
 const getOrders = async (req, res, next) => {
     try {
         const { order_acco_id } = req.params
         const { orders } = req.context.models
-        const gotOrders = await orders.findAll({ where: { order_acco_id }})
+        const gotOrders = await orders.findAll({ where: { order_acco_id } })
         res.json(gotOrders)
     } catch (error) {
         res.json(error)
@@ -11,13 +15,13 @@ const getOrders = async (req, res, next) => {
 }
 
 const createOrder = async (req, res, next) => {
-    const { 
+    const {
         order_status,
-        order_subtotal, 
-        order_shipping, 
-        order_discount, 
-        order_tax, 
-        order_total_due, 
+        order_subtotal,
+        order_shipping,
+        order_discount,
+        order_tax,
+        order_total_due,
         order_total_qty,
         order_watr_numbers,
         order_is_receive,
@@ -26,10 +30,11 @@ const createOrder = async (req, res, next) => {
     } = req.body
 
     try {
+        console.log("test")
         const { order_acco_id } = req.params
         const { orders } = req.context.models
         const queryGetLastRow = "select nextval('order_name_seq')";
-        let [lastRowByQuery,meta] = await sequelize.query(queryGetLastRow)
+        let [lastRowByQuery, meta] = await sequelize.query(queryGetLastRow)
         let dateNow = new Date().getFullYear() + "" + (new Date().getMonth() + 1) + "" + new Date().getDate()
 
         const data = {
@@ -49,57 +54,94 @@ const createOrder = async (req, res, next) => {
             order_weight
         }
         let createOrder = await orders.create(data)
-        res.json(createOrder)  
+        console.log(createOrder)
+        res.json(createOrder)
     } catch (error) {
         console.log(error)
         res.send(error)
     }
 }
 
-const updateOrder = (req,res,next) => {
-  try {
-      
-  } catch (error) {
-      
-  }
+const finishOrder = async (req,res,next) => {
+  
 }
 
-const cancelOrder = async (req,res,next) => {
-    let wale_id_mpcomm = 9999;
-    const {order_name} = req.body
-    const {orders,walletTransaction} = req.context.models
-    let getOrder = await orders.findOne({where:{order_name}})
-
-    if(getOrder.order_stat_name === "SHIPPING"){
-        res.send({
-            error:true,
-            message:"Order sudah dalam status Shipping"
-        })
-
-    }else{
-        let watr_numbers = getOrder.order_watr_numbers
-        let getWatr = await walletTransaction.findOne({where:{watr_numbers}})
-        let wale_id = getWatr.watr_numbers.split("-")[0]
-        let total_amount = getWatr.watr_debet
-
-        let datransCreditToUser = {
-            watr_numbers:  9999 + "-"+wale_id+"-"+ lastTransNo,
-            watr_debet: 0,
-            watr_date: new Date(),
-            watr_credit: total_amount,
-            watr_acc_target: wale_id,
-            watr_wale_id: 9999,
-            watr_paty_name: "TFC",
-            order_name
-        }
-
-        await wallet.increment('wale_saldo', { by: total_amount, where: { wale_id } })
-        let result = await createTransaction(walletTransaction, dataTransaction)
-        await wallet.decrement('wale_saldo', { by: total_amount, where: { wale_id : wale_id_mpcomm }})
-        await walletTransaction.create(datransCreditToUser)
-        console.log(getWatr)
-        res.sendStatus(200)
+const getOrderedProduct = async (req,res,next) => {
+    const {acco_id} = req.params
+    let queryGetOrderedProduct = "select * from orders_line_items join product on orit_prod_id = prod_id join orders on orit_order_name=order_name where prod_acco_id='"+acco_id+"' AND orders.order_stat_name='PAID' OR orders.order_stat_name='SHIPPING'";
+    try {
+        let [result,meta] = await sequelize.query(queryGetOrderedProduct)
+        res.send(result)
+    } catch (error) {
+        res.send(error)
     }
 }
 
-export { getOrders, createOrder, cancelOrder }
+const updateOrder = async (req, res, next) => {
+    const {order_name} = req.body
+    const {orders} = req.context.models
+    try {
+        await orders.update({order_stat_name:'SHIPPING'},{where:{order_name}})
+        res.sendStatus(200)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const cancelOrder = async (req, res, next) => {
+    let MPCOMM = 9999;
+    const { order_name } = req.body
+    const { orders, walletTransaction, wallet } = req.context.models
+    
+    try {
+        let getOrder = await orders.findOne({ where: { order_name } })
+
+        switch (getOrder.order_stat_name) {
+            case "SHIPPING":
+                res.send({
+                    error: true,
+                    message: "Order sudah dalam status Shipping"
+                })               
+                break;
+
+            case "PAID":
+                let watr_numbers = await getOrder.order_watr_numbers
+                let getWatr = await walletTransaction.findOne({ where: { watr_numbers } })
+                let wale_id = getWatr.watr_numbers.split("-")[0]
+                let total_amount = getWatr.watr_debet
+    
+                req.body.acco_id = getOrder.order_acco_id
+                req.body.total_amount = total_amount
+                console.log(req.body)
+                let preDataOpt = {wale_id_increase:wale_id,wale_id_decrease:MPCOMM}
+                let { dataTransactionCredit, dataTransactionDebit } = await prepareCancelTransaction(req,preDataOpt)
+                
+                dataTransactionCredit.watr_numbers = MPCOMM+"-"+wale_id+getWatr.watr_numbers.split("-")[2]+"-ret"
+                dataTransactionDebit.watr_numbers = MPCOMM+"-"+wale_id+"-"+getWatr.watr_numbers.split("-")[2]+"-ret"
+    
+                const option = {
+                    wale_id_decrease : MPCOMM,
+                    wale_id_increase : wale_id,
+                    total_amount,
+                    dataTransactionCredit,
+                    dataTransactionDebit
+                }
+                await createTransaction(req,option)
+                await orders.update({order_stat_name:"CANCELLED"},{where:{order_name}})
+                res.sendStatus(200)    
+                break;
+
+            case "CHECKOUT":
+                await orders.update({order_stat_name:"CANCELLED"},{where:{order_name}})
+                break;
+
+            default:
+                break;
+        }
+    } catch (error) {
+        console.log(error)
+        res.send(error)
+    }
+}
+
+export { getOrders, createOrder, cancelOrder , getOrderedProduct,updateOrder}
