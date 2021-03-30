@@ -1,16 +1,23 @@
 import easyinvoice from 'easyinvoice'
 import fs from 'fs'
+import sequelize from '../../models/index'
 import path from 'path'
 
 
 const createNewInvoice = async (req,res,next) => {
+    const {order_name} = req.body
+    const {orders} = req.context.models
+    
+
+
     const dataOrder = [
         {product:"Baju",harga:50000}
     ,{product:"Celana",harga:50000}]
     try {
         var data = {
             "documentTitle": "Summary Order", //Defaults to INVOICE
-            "currency": "Rp",
+            "currency": "IDR",
+            "taxNotation": "vat", //or gst
             "marginTop": 25,
             "marginRight": 25,
             "marginLeft": 25,
@@ -28,25 +35,34 @@ const createNewInvoice = async (req,res,next) => {
                 //"custom3": "custom value 3"
             },
             "client": {
-                "company": "User ID :1048",
+                "User ID": "1048",
                 "address": "Clientstreet 456",
                 "zip": "4567 CD",
                 "city": "Clientcity",
-                "country": "Clientcountry"
+                "country": "Indonesia"
                 //"custom1": "custom value 1",
                 //"custom2": "custom value 2",
                 //"custom3": "custom value 3"
             },
-            "products":[],
+            "invoiceNumber": "2020.0001",
+            "invoiceDate": new Date().toLocaleString(),
+            "products": [
+                {
+                    "quantity": "2",
+                    "description": "Baju",
+                    "tax": 0,
+                    "price":150000
+                },
+                {
+                    "quantity": "4",
+                    "description": "Celana",
+                    "tax": 0,
+                    "price": 200000
+                }
+            ],
             "bottomNotice": "Kindly pay your invoice within 15 days."
         };
 
-        data.products.push({
-            "quantity": "2",
-            "description": "Baju",
-            "tax": 15000,
-            "price": 500000
-        })
         const result = await easyinvoice.createInvoice(data);
         await fs.writeFileSync("server/invoices/invoice.pdf", result.pdf, 'base64');
         

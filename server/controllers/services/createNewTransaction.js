@@ -3,6 +3,7 @@ import { getLastTransWallet } from './getLastTransWallet'
 const createNewTransOrder = async (dataTransactionCredit, dataTransactionDebit, option) => {
     const { payment_by, wale_id_mpcomm, nextTransUser, bacc_id } = option
     console.log("order hitted")
+    const {bankAccount} = req.context.models
     if (payment_by == "transfer_bank") {
         const getBacc = await bankAccount.findOne({ where: { bacc_id }, raw: true })
         dataTransactionDebit.watr_numbers = getBacc.bacc_acc_number + "-" + wale_id_mpcomm + "-" + nextTransUser
