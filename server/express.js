@@ -18,7 +18,6 @@ const CURRENT_WORKING_DIR = process.cwd()
 //comment script dibawah before building for production
 //devBundle.compile(app)
 
-
 // parse body params and attache them to req.body
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))

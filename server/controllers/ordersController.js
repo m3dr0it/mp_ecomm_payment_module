@@ -149,7 +149,7 @@ const cancelOrder = async (req, res, next) => {
                 let preDataOpt = { wale_id_increase: wale_id, wale_id_decrease: MPCOMM }
                 let { dataTransactionCredit, dataTransactionDebit } = await prepareCancelTransaction(req, preDataOpt)
 
-                dataTransactionCredit.watr_numbers = MPCOMM + "-" + wale_id + getWatr.watr_numbers.split("-")[2] + "-ret"
+                dataTransactionCredit.watr_numbers = MPCOMM + "-" + wale_id +"-"+ getWatr.watr_numbers.split("-")[2] + "-ret"
                 dataTransactionDebit.watr_numbers = MPCOMM + "-" + wale_id + "-" + getWatr.watr_numbers.split("-")[2] + "-ret"
 
                 const option = {
