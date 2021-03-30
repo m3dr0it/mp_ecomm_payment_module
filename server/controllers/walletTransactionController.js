@@ -56,7 +56,7 @@ const newTransaction = async (req, res, next) => {
     let preDataOpt = await preData(req)
     let preparedData = {}
     try {
-        let { dataTransactionCredit, dataTransactionDebit, nextTransUser } = await prepareTransaction(req,preDataOpt)
+        let { dataTransactionCredit, dataTransactionDebit, nextTransUser } = await prepareTransaction(preDataOpt)
         switch (transaction_type) {
             case "order":
                 preparedData = await createNewTransOrder(dataTransactionCredit, dataTransactionDebit, { payment_by, MPCOMM, nextTransUser, bacc_id })
