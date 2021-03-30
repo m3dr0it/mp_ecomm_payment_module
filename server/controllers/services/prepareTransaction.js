@@ -10,16 +10,6 @@ const preData = async (req) => {
     return { wale_id_increase: wale_id_mpcomm, wale_id_decrease: walletBuyer.wale_id, nextTransUser }
 }
 
-const preFinishOrderData = async (req) => {
-    const { wallet } = req.context.models
-    const { acco_id } = req.body
-    const wale_id_mpcomm = 9999;
-    const walletBuyer = await wallet.findOne({ where: { wale_acco_id: acco_id } })
-    let nextTransUser = await getLastTransWallet(walletBuyer.wale_id)
-
-    return { wale_id_increase: wale_id_mpcomm, wale_id_decrease: walletBuyer.wale_id, nextTransUser }
-}
-
 const prepareTransaction = async (req, { wale_id_decrease, wale_id_increase, nextTransUser }) => {
     const { total_amount } = req.body || 0
     const { order_name } = req.body || null
