@@ -1,6 +1,4 @@
 import jsonwebtoken, { JsonWebTokenError } from 'jsonwebtoken'
-import easyinvoice from "easyinvoice";
-import { response } from 'express';
 import { createNewTransOrder, createNewTransBilling, createNewTransAdv, createTransaction } from './services/createNewTransaction'
 import { prepareTransaction,preData } from './services/prepareTransaction'
 
@@ -54,9 +52,10 @@ const newTransaction = async (req, res, next) => {
     const { orders } = req.context.models
     const MPCOMM = 9999
     let preDataOpt = await preData(req)
+    console.log(preDataOpt)
     let preparedData = {}
     try {
-        let { dataTransactionCredit, dataTransactionDebit, nextTransUser } = await prepareTransaction(preDataOpt)
+        let { dataTransactionCredit, dataTransactionDebit, nextTransUser } = await prepareTransaction(req,preDataOpt)
         switch (transaction_type) {
             case "order":
                 preparedData = await createNewTransOrder(dataTransactionCredit, dataTransactionDebit, { payment_by, MPCOMM, nextTransUser, bacc_id })
