@@ -1,4 +1,5 @@
 import { getLastTransWallet } from './getLastTransWallet'
+import {bankAccount} from '../../models/index'
 
 const createNewTransOrder = async (dataTransactionCredit, dataTransactionDebit, option) => {
     const { payment_by, wale_id_mpcomm, nextTransUser, bacc_id } = option
