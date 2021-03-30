@@ -31,6 +31,11 @@ app.use(async (req, res, next) => {
     req.context = {models};
     next();
 });
+app.use(function(req, res, next) {  
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+}); 
 // app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
 // #2 add this script when you add other route
 app.use('/api/orders',routes.orders);
@@ -42,11 +47,7 @@ app.use('/api/paymentType',routes.paymentType)
 app.use('/api/bankAccount',routes.bankAccount)
 app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
 
-app.use(function(req, res, next) {  
-      res.header('Access-Control-Allow-Origin', req.headers.origin);
-      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-      next();
- });  
+ 
 
 // Catch unauthorised errors
 app.use((err, req, res, next) => {
