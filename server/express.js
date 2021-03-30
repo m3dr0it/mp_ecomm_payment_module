@@ -42,11 +42,14 @@ app.use('/api/paymentType',routes.paymentType)
 app.use('/api/bankAccount',routes.bankAccount)
 app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
 
+app.use(function(req, res, next) {  
+      res.header('Access-Control-Allow-Origin', req.headers.origin);
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      next();
+ });  
+
 // Catch unauthorised errors
 app.use((err, req, res, next) => {
-  
-res.header("Access-Control-Allow-Origin", "http://localhost:3000"); // update to match the domain you will make the request from
-res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   if (err.name === 'UnauthorizedError') {
     res.status(401).json({"error" : err.name + ": " + err.message})
   }else if (err) {
